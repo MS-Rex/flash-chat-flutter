@@ -1,15 +1,59 @@
+import 'package:flash_chat/screens/login_screen.dart';
+import 'package:flash_chat/screens/registration_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class WelcomeScreen extends StatefulWidget {
+  static const id = 'welcome';
+
   @override
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
+class _WelcomeScreenState extends State<WelcomeScreen>
+    with SingleTickerProviderStateMixin {
+  AnimationController controller1;
+  Animation animation1;
+  Animation animation2;
+  @override
+  void initState() {
+    super.initState();
+    controller1 =
+        AnimationController(vsync: this, duration: Duration(seconds: 1));
+    animation1 = CurvedAnimation(parent: controller1, curve: Curves.easeIn);
+    controller1.reverse(from: 1);
+    animation1.addStatusListener((status) {
+      if (status == AnimationStatus.dismissed) {
+        controller1.forward();
+      }
+      //print(status);
+    });
+    // if (animation1.isCompleted) {
+    //   controller1.reverse(from: 1);
+    // } else if (animation1.isDismissed) {
+    //   controller1.forward();
+    // }
+    animation2 =
+        ColorTween(begin: Colors.yellowAccent.shade200, end: Colors.white)
+            .animate(controller1);
+
+    animation2.addListener(() {
+      //print(animation2.value);
+      //setState(() {});
+    });
+    animation1.addListener(
+      () {
+        setState(() {
+          //print(animation1.value);
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: animation2.value,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
@@ -20,15 +64,23 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               children: <Widget>[
                 Container(
                   child: Image.asset('images/logo.png'),
-                  height: 60.0,
+                  height: animation1.value * 100,
                 ),
-                Text(
-                  'Flash Chat',
-                  style: TextStyle(
-                    fontSize: 45.0,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
+                AnimatedTextKit(animatedTexts: [
+                  TypewriterAnimatedText('Flash Chat',
+                      textStyle: TextStyle(
+                        fontSize: 35.0,
+                        fontWeight: FontWeight.w900,
+                      ),
+                      speed: const Duration(milliseconds: 100)),
+                ])
+                // Text(
+                //   'Flash Chat',
+                //   style: TextStyle(
+                //     fontSize: 45.0,
+                //     fontWeight: FontWeight.w900,
+                //   ),
+                // ),
               ],
             ),
             SizedBox(
@@ -42,7 +94,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 borderRadius: BorderRadius.circular(30.0),
                 child: MaterialButton(
                   onPressed: () {
-                    //Go to login screen.
+                    Navigator.pushNamed(context, LoginScreen.id);
                   },
                   minWidth: 200.0,
                   height: 42.0,
@@ -60,7 +112,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 elevation: 5.0,
                 child: MaterialButton(
                   onPressed: () {
-                    //Go to registration screen.
+                    Navigator.pushNamed(context, RegistrationScreen.id);
                   },
                   minWidth: 200.0,
                   height: 42.0,
