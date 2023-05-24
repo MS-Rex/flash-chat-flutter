@@ -1,4 +1,11 @@
+import 'package:flash_chat/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flash_chat/components/buttons.dart';
+import 'package:flash_chat/styles/TextDecorations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'chat_screen.dart';
+import 'package:alert/alert.dart';
+//import 'package:cool_alert/cool_alert.dart';
 
 class LoginScreen extends StatefulWidget {
   static const id = 'login';
@@ -8,6 +15,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  String logemail;
+  String logPasswd;
+  final _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,74 +40,45 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             TextField(
               onChanged: (value) {
-                //Do something with the user input.
+                logemail = value;
               },
-              decoration: InputDecoration(
-                hintText: 'Enter your email',
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Colors.lightBlueAccent, width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Colors.lightBlueAccent, width: 2.0),
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-              ),
+              decoration:
+                  textDecoration('Enter your Email', Colors.lightBlueAccent),
             ),
             SizedBox(
               height: 8.0,
             ),
             TextField(
               onChanged: (value) {
-                //Do something with the user input.
+                logPasswd = value;
               },
-              decoration: InputDecoration(
-                hintText: 'Enter your password.',
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Colors.lightBlueAccent, width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Colors.lightBlueAccent, width: 2.0),
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-              ),
+              decoration:
+                  textDecoration('Enter your Password', Colors.lightBlueAccent),
             ),
             SizedBox(
               height: 24.0,
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: Material(
-                color: Colors.lightBlueAccent,
-                borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                elevation: 5.0,
-                child: MaterialButton(
-                  onPressed: () {
-                    //Implement login functionality.
-                  },
-                  minWidth: 200.0,
-                  height: 42.0,
-                  child: Text(
-                    'Log In',
-                  ),
-                ),
-              ),
-            ),
+            LoginButtons('Log In', Colors.lightBlueAccent, () async {
+              try {
+                final user = await _auth.signInWithEmailAndPassword(
+                    email: logemail, password: logPasswd);
+                if (user != null) {
+                  Navigator.pushNamed(context, ChatScreen.id);
+                }
+              } on FirebaseAuthException catch (e) {
+                if (e.code == 'wrong-password') {
+                  Alert(message: 'Wrong Password !\n Try Again').show();
+                  // CoolAlert.show(
+                  //   context: context,
+                  //   type: CoolAlertType.error,
+                  //   text: "Incorrect Password! ",
+                  // );
+                  print(e.code);
+                  //return mms(context);
+                }
+                //print(e);
+              }
+            }),
           ],
         ),
       ),
