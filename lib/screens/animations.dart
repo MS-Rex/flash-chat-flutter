@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class LoginAnimations {
   //Duration secondss;
-  AnimationController controller1;
-  Animation curveAnimation;
-  Animation textAnimation;
+  late AnimationController controller1;
+  late Animation curveAnimation;
+  late Animation textAnimation;
   LoginAnimations(this.controller1);
   Animation curveAnime(Curve cAnime) {
     curveAnimation = CurvedAnimation(parent: controller1, curve: cAnime);

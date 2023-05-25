@@ -15,9 +15,9 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen>
     with SingleTickerProviderStateMixin {
-  AnimationController controller1;
-  Animation animation1;
-  Animation animation2;
+  late AnimationController controller1;
+  late Animation animation1;
+  late Animation animation2;
 
   @override
   void initState() {
